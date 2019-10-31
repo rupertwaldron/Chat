@@ -9,8 +9,9 @@ import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.io.IOException;
 import java.net.ServerSocket;
-import java.text.SimpleDateFormat;
-import java.util.Date;
+import java.util.concurrent.Executors;
+
+import static com.ruppyrup.ChatLog.chatLog;
 
 public class ChatServer extends JFrame implements Runnable {
     private static final long serialVersionUID = 4756118355993389721L;
@@ -47,7 +48,13 @@ public class ChatServer extends JFrame implements Runnable {
         // button panel
         var buttonPanel = new JPanel();
         add(buttonPanel, BorderLayout.PAGE_END);
-        startButton.addActionListener((a) -> startServer());
+        startButton.addActionListener(e -> {
+            if (startButton.getText().equals("Start")) {
+                startServer();
+            } else {
+                stop();
+            }
+        });
         buttonPanel.add(startButton);
         getRootPane().setDefaultButton(startButton);
 
@@ -67,41 +74,36 @@ public class ChatServer extends JFrame implements Runnable {
     }
 
     private void stop() {
-        log("Closing socket");
+        chatLog("Closing socket", logArea);
         if (serverSocket != null && serverSocket.isBound()) {
             try {
                 serverSocket.close();
             } catch (IOException e) {
-                log("Failed to close server socket on port : " + PORT_NUMBER);
-                log(e.getMessage());
+                chatLog("Failed to close server socket on port : " + PORT_NUMBER, logArea);
+                chatLog(e.getMessage(), logArea);
             }
         }
+        startButton.setText("Start");
     }
 
     @Override
     public void run() {
-        log("Server is running...");
+        chatLog("Server is running...", logArea);
         try {
             serverSocket = new ServerSocket(PORT_NUMBER);
+            var pool = Executors.newFixedThreadPool(20);
             while (true) {
-                var socket = serverSocket.accept();
-                log("New connection to " + socket.getInetAddress() + " : " + socket.getPort());
+                pool.execute(new ClientThread(serverSocket.accept(), logArea));
             }
         } catch (IOException e) {
-            log("Exception whilst trying to listen on port " + PORT_NUMBER);
-            log(e.getMessage());
+            chatLog("Exception whilst trying to listen on port " + PORT_NUMBER, logArea);
+            chatLog(e.getMessage(), logArea);
         } finally {
             stop();
         }
     }
 
-    private void log(String message) {
-        var time = new Date();
-        var dateFormat = new SimpleDateFormat("dd-MMM-yyyy, HH:mm:ss");
-        var timeStamp = dateFormat.format(time);
-        logArea.append(timeStamp + " -> " + message + "\n");
 
-    }
 
     public static void main(String[] args) {
         try {
