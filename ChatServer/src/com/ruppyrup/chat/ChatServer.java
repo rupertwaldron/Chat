@@ -40,6 +40,7 @@ public class ChatServer extends JFrame implements Runnable {
 
         // log area
         logArea.setEditable(false);
+        logArea.setForeground(Color.RED);
         var scrollPane = new JScrollPane(logArea);
         mainPanel.add(scrollPane);
         DefaultCaret caret = (DefaultCaret) logArea.getCaret();
@@ -75,7 +76,7 @@ public class ChatServer extends JFrame implements Runnable {
 
     private void stop() {
         chatLog("Closing socket", logArea);
-        if (serverSocket != null && serverSocket.isBound()) {
+        if (serverSocket != null) {
             try {
                 serverSocket.close();
             } catch (IOException e) {
@@ -96,10 +97,10 @@ public class ChatServer extends JFrame implements Runnable {
                 pool.execute(new ClientThread(serverSocket.accept(), logArea));
             }
         } catch (IOException e) {
-            chatLog("Exception whilst trying to listen on port " + PORT_NUMBER, logArea);
+            //chatLog("Exception whilst trying to listen on port " + PORT_NUMBER, logArea);
             chatLog(e.getMessage(), logArea);
         } finally {
-            stop();
+            chatLog("Thread finishing", logArea);
         }
     }
 

@@ -10,11 +10,11 @@ import java.util.function.Consumer;
 import static com.ruppyrup.ChatLog.chatLog;
 
 public class ClientThread implements Runnable {
-    private final static List<String> COLOURS = Arrays.asList("\033[31m", "\033[32m", "\033[33m", "\033[34m", "\033[35m", "\033[36m", "\033[37m");
+//    private final static List<String> COLOURS = Arrays.asList("\033[31m", "\033[32m", "\033[33m", "\033[34m", "\033[35m", "\033[36m", "\033[37m");
     private static List<PrintWriter> clientWriters = new ArrayList<>();
     private static Map<Integer, String> names = new HashMap<>();
-    private static Map<Integer, String> portColourMap = new HashMap<>();
-    private static int colorIndex;
+//    private static Map<Integer, String> portColourMap = new HashMap<>();
+//    private static int colorIndex;
     private Socket socket;
     private JTextArea textArea;
 
@@ -26,8 +26,8 @@ public class ClientThread implements Runnable {
     @Override
     public void run() {
         chatLog("New connection to " + socket.getInetAddress() + " : " + socket.getPort(), textArea);
-        colorIndex = colorIndex < COLOURS.size() ? colorIndex : 0;
-        portColourMap.put(socket.getPort(), COLOURS.get(colorIndex++));
+//        colorIndex = colorIndex < COLOURS.size() ? colorIndex : 0;
+//        portColourMap.put(socket.getPort(), COLOURS.get(colorIndex++));
 
         try (var in = new Scanner(socket.getInputStream());
              var out = new PrintWriter(socket.getOutputStream(), true)){
@@ -43,8 +43,7 @@ public class ClientThread implements Runnable {
                 String input = in.nextLine();
 
                 chatLog(names.get(socket.getPort()) + " : " + input, textArea);
-                Consumer<PrintWriter> broadcast = writer -> writer
-                    .println(portColourMap.get(socket.getPort()) + names.get(socket.getPort()) + " : " + input);
+                Consumer<PrintWriter> broadcast = writer -> writer.println(names.get(socket.getPort()) + " : " + input);
                 clientWriters.forEach(broadcast);
             }
         } catch (Exception e) {
