@@ -1,18 +1,17 @@
 
-lsquid:MaximumInheritanceDepth"<This class has 6 parents which is greater than 5 authorized.(ë¶»”8ãØ¨Èá-
-osquid:S1450"QRemove the "in" field and declare it as a local variable in the relevant methods.(»ğ¶ü8¯·èÈá-
-Ksquid:S1948"(Make "socket" transient or serializable.(Å’¬Úşÿÿÿÿ8ÔàÛÈá-
-\squid:S1854R"9Remove this useless assignment to local variable "input".(„³®ùÿÿÿÿ8ğµëÈá-
-xsquid:S3252>"ZUse static access with "javax.swing.ScrollPaneConstants" for "HORIZONTAL_SCROLLBAR_NEVER".(¤·¤Ç8ÙüÖÉá-
-]squid:S1161-":Add the "@Override" annotation above this method signature(†§şıÿÿÿÿ8³–§Éá-
-psquid:S1450"RRemove the "out" field and declare it as a local variable in the relevant methods.(¨¥ÑÓ8©ÊêÈá-
-Ksquid:S1068"(Remove this unused "name" private field.(÷íö›ÿÿÿÿÿ8ÖñÙÈá-
-Hsquid:S00108j")Either remove or fill this block of code.(”ı¾8Á¾Èá-
-}squid:S3252F"ZUse static access with "javax.swing.ScrollPaneConstants" for "HORIZONTAL_SCROLLBAR_NEVER".(éé¨ğúÿÿÿÿ8¸ÅŠñá-
-squid:S3252F"\Use static access with "javax.swing.ScrollPaneConstants" for "VERTICAL_SCROLLBAR_AS_NEEDED".(éé¨ğúÿÿÿÿ8¸ÅŠñá-
-Msquid:S2093N"*Change this "try" to a try-with-resources.(¡»¢üùÿÿÿÿ8ä¼ÿÈá-
-Msquid:S1481R"*Remove this unused "input" local variable.(„³®ùÿÿÿÿ8ğµëÈá-
-zsquid:S3252>"\Use static access with "javax.swing.ScrollPaneConstants" for "VERTICAL_SCROLLBAR_AS_NEEDED".(¤·¤Ç8úÖÉá-
-Csquid:S1948"%Make "out" transient or serializable.(¨¥ÑÓ8õ²İÈá-
-Bsquid:S1948"$Make "in" transient or serializable.(»ğ¶ü8ŠÁÜÈá-
-Esquid:S1068"'Remove this unused "out" private field.(¨¥ÑÓ8õ²İÈá-
+}squid:S3252H"ZUse static access with "javax.swing.ScrollPaneConstants" for "HORIZONTAL_SCROLLBAR_NEVER".(éé¨ğúÿÿÿÿ8¸ÅŠñá-
+Qsquid:S1611W"3Remove the parentheses around the "event" parameter(ßÉÛà8ãó«ñá-
+osquid:S1450"QRemove the "in" field and declare it as a local variable in the relevant methods.(»ğ¶ü8îñ¸†â-
+Isquid:S00108Š")Either remove or fill this block of code.(”ı¾8Á¾Èá-
+zsquid:S3252@"\Use static access with "javax.swing.ScrollPaneConstants" for "VERTICAL_SCROLLBAR_AS_NEEDED".(¤·¤Ç8úÖÉá-
+Ksquid:S1068"(Remove this unused "name" private field.(÷íö›ÿÿÿÿÿ8ÖñÙÈá-
+]squid:S1161/":Add the "@Override" annotation above this method signature(†§şıÿÿÿÿ8³–§Éá-
+squid:S3252H"\Use static access with "javax.swing.ScrollPaneConstants" for "VERTICAL_SCROLLBAR_AS_NEEDED".(éé¨ğúÿÿÿÿ8¸ÅŠñá-
+Bsquid:S1948"$Make "in" transient or serializable.(»ğ¶ü8îñ¸†â-
+xsquid:S3252@"ZUse static access with "javax.swing.ScrollPaneConstants" for "HORIZONTAL_SCROLLBAR_NEVER".(¤·¤Ç8ÙüÖÉá-
+Zsquid:S1854{"7Remove this useless assignment to local variable "sad".(ïò‹×ıÿÿÿÿ8¼Áˆ•â-
+Ksquid:S1481{"(Remove this unused "sad" local variable.(ïò‹×ıÿÿÿÿ8¼Áˆ•â-
+Ksquid:S1948"(Make "socket" transient or serializable.(Å’¬Úşÿÿÿÿ8îñ¸†â-
+Msquid:S2093h"*Change this "try" to a try-with-resources.(¡»¢üùÿÿÿÿ8îñ¸†â-
+lsquid:MaximumInheritanceDepth"<This class has 6 parents which is greater than 5 authorized.(ë¶»”8ãØ¨Èá-
+Csquid:S1948"%Make "out" transient or serializable.(¨¥ÑÓ8îñ¸†â-

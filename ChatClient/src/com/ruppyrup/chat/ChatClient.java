@@ -4,7 +4,10 @@ import com.ruppyrup.mycomponents.TitleLabel;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.*;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -90,6 +93,7 @@ public class ChatClient extends JFrame implements Runnable {
         String message = inputArea.getText().trim();
         if (message.length() > 0) {
             System.out.println(message);
+            out.println(message);
             inputArea.setText("");
         }
     }
@@ -101,7 +105,11 @@ public class ChatClient extends JFrame implements Runnable {
             socket = new Socket(host, PORT_NUMBER);
             in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
             out = new PrintWriter(socket.getOutputStream(), true);
-            String input = in.readLine();
+
+            while (true) {
+                String input = in.readLine();
+                chatArea.append(input + "\n");
+            }
         } catch (ConnectException e) {
             JOptionPane.showMessageDialog(this, "The server is not running");
         } catch (IOException ee) {
@@ -112,6 +120,7 @@ public class ChatClient extends JFrame implements Runnable {
     }
 
     private void close() {
+        out.println(" has left the chat room!");
         try {
             if (socket != null && socket.isConnected()) {
                 socket.close();
