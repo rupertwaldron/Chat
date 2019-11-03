@@ -86,6 +86,7 @@ public class ChatServer extends JFrame implements Runnable {
             while (true) {
                 var socket = serverSocket.accept();
                 log("New connection to " + socket.getInetAddress() + " : " + socket.getPort());
+                new Connection(this, socket);
             }
         } catch (IOException e) {
             log("Exception whilst trying to listen on port " + PORT_NUMBER);
@@ -95,7 +96,7 @@ public class ChatServer extends JFrame implements Runnable {
         }
     }
 
-    private void log(String message) {
+    public void log(String message) {
         var time = new Date();
         var dateFormat = new SimpleDateFormat("dd-MMM-yyyy, HH:mm:ss");
         var timeStamp = dateFormat.format(time);
