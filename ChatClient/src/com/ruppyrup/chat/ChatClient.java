@@ -1,10 +1,14 @@
 package com.ruppyrup.chat;
 
 import com.ruppyrup.mycomponents.TitleLabel;
+import com.ruppyrup.networking.LogInDialog;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.*;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -23,6 +27,7 @@ public class ChatClient extends JFrame implements Runnable {
     private PrintWriter out;
     private JTextArea chatArea = new JTextArea(20, 20);
     private JTextArea inputArea = new JTextArea(3, 20);
+    private LogInDialog logInDiaglog = new LogInDialog("Chat");
 
 
     public ChatClient() {
@@ -32,7 +37,19 @@ public class ChatClient extends JFrame implements Runnable {
         setLocationRelativeTo(null);
         setVisible(true);
         setDefaultCloseOperation(DO_NOTHING_ON_CLOSE);
+        login();
         new Thread(this).start();
+    }
+
+    private void login() {
+        logInDiaglog.setVisible(true);
+        if (!logInDiaglog.isCancelled()) {
+            host = logInDiaglog.getIpAddressField();
+            name = logInDiaglog.getUserNameField();
+            System.out.println("Host :" + host + "\nName : " + name);
+        } else {
+            close();
+        }
     }
 
     private void initGUI() {
