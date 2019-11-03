@@ -1,6 +1,7 @@
 package com.ruppyrup.chat;
 
 import com.ruppyrup.mycomponents.TitleLabel;
+import com.ruppyrup.networking.LogInDialog;
 
 import javax.swing.*;
 import java.awt.*;
@@ -26,7 +27,7 @@ public class ChatClient extends JFrame implements Runnable {
     private PrintWriter out;
     private JTextArea chatArea = new JTextArea(20, 20);
     private JTextArea inputArea = new JTextArea(3, 20);
-
+    private LogInDialog logInDiaglog = new LogInDialog("Chat");
 
     public ChatClient() {
         initGUI();
@@ -35,7 +36,19 @@ public class ChatClient extends JFrame implements Runnable {
         setLocationRelativeTo(null);
         setVisible(true);
         setDefaultCloseOperation(DO_NOTHING_ON_CLOSE);
+        login();
         new Thread(this).start();
+    }
+
+    private void login() {
+        logInDiaglog.setVisible(true);
+        if (!logInDiaglog.isCancelled()) {
+            host = logInDiaglog.getIpAddressField();
+            name = logInDiaglog.getUserNameField();
+            System.out.println("Host :" + host + "\nName : " + name);
+        } else {
+            close();
+        }
     }
 
     private void initGUI() {
@@ -105,6 +118,7 @@ public class ChatClient extends JFrame implements Runnable {
             socket = new Socket(host, PORT_NUMBER);
             in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
             out = new PrintWriter(socket.getOutputStream(), true);
+            out.println(name);
 
             while (true) {
                 String input = in.readLine();
@@ -120,14 +134,16 @@ public class ChatClient extends JFrame implements Runnable {
     }
 
     private void close() {
-        out.println(" has left the chat room!");
         try {
             if (socket != null && socket.isConnected()) {
+                out.println(" has left the chat room!");
                 socket.close();
             }
         } catch (IOException e) {
+            System.out.println(e.getMessage());
             System.exit(0);
         }
+        System.exit(0);
     }
 
     public static void main(String[] args) {

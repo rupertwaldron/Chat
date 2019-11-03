@@ -26,15 +26,13 @@ public class ClientThread implements Runnable {
     @Override
     public void run() {
         chatLog("New connection to " + socket.getInetAddress() + " : " + socket.getPort(), textArea);
-//        colorIndex = colorIndex < COLOURS.size() ? colorIndex : 0;
-//        portColourMap.put(socket.getPort(), COLOURS.get(colorIndex++));
 
         try (var in = new Scanner(socket.getInputStream());
              var out = new PrintWriter(socket.getOutputStream(), true)){
 
             clientWriters.add(out);
 
-            out.println("Enter client name: ");
+//            out.println("Enter client name: ");
             String name = in.nextLine();
             out.println(name + " has joined");
             names.put(socket.getPort(), name);
