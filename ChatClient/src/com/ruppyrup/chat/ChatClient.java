@@ -120,15 +120,18 @@ public class ChatClient extends JFrame implements Runnable {
             out = new PrintWriter(socket.getOutputStream(), true);
             out.println(name);
 
-            while (true) {
+            while (socket.isConnected()) {
                 String input = in.readLine();
+                if (input == null) break;
                 chatArea.append(input + "\n");
             }
+            chatArea.append("Server has shut down, closing window...");
         } catch (ConnectException e) {
             JOptionPane.showMessageDialog(this, "The server is not running");
         } catch (IOException ee) {
             JOptionPane.showMessageDialog(this, "Lost connection to the server");
         } finally {
+            System.out.println("Finally block for close");
             close();
         }
     }

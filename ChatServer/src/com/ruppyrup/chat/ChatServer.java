@@ -16,9 +16,16 @@ import static com.ruppyrup.ChatLog.chatLog;
 public class ChatServer extends JFrame implements Runnable {
     private static final long serialVersionUID = 4756118355993389721L;
     private static final int PORT_NUMBER = 63458;
-    private JTextArea logArea = new JTextArea(10, 30);
+
+    private static boolean serverRunning = true;
+
+    private JTextArea logArea = new JTextArea(20, 60);
     private JButton startButton = new JButton("Start");
     private ServerSocket serverSocket;
+
+    public static boolean isServerRunning() {
+        return serverRunning;
+    }
 
     public ChatServer() {
         initGUI();
@@ -72,13 +79,15 @@ public class ChatServer extends JFrame implements Runnable {
         //startButton.setEnabled(false);
         new Thread(this).start();
         startButton.setText("Stop");
+        serverRunning = true;
     }
 
     private void stop() {
-        chatLog("Closing socket", logArea);
         if (serverSocket != null) {
             try {
+                chatLog("Attempting to close socket", logArea);
                 serverSocket.close();
+                serverRunning = false;
             } catch (IOException e) {
                 chatLog("Failed to close server socket on port : " + PORT_NUMBER, logArea);
                 chatLog(e.getMessage(), logArea);
@@ -94,10 +103,9 @@ public class ChatServer extends JFrame implements Runnable {
             serverSocket = new ServerSocket(PORT_NUMBER);
             var pool = Executors.newFixedThreadPool(20);
             while (true) {
-                pool.execute(new ClientThread(serverSocket.accept(), logArea));
+                pool.execute(new Connection(serverSocket.accept(), logArea));
             }
         } catch (IOException e) {
-            //chatLog("Exception whilst trying to listen on port " + PORT_NUMBER, logArea);
             chatLog(e.getMessage(), logArea);
         } finally {
             chatLog("Thread finishing", logArea);

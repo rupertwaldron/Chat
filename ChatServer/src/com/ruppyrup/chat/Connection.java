@@ -8,19 +8,19 @@ import java.util.*;
 import java.util.function.Consumer;
 
 import static com.ruppyrup.ChatLog.chatLog;
+import static com.ruppyrup.chat.ChatServer.*;
 
-public class ClientThread implements Runnable {
-//    private final static List<String> COLOURS = Arrays.asList("\033[31m", "\033[32m", "\033[33m", "\033[34m", "\033[35m", "\033[36m", "\033[37m");
+public class Connection implements Runnable {
     private static List<PrintWriter> clientWriters = new ArrayList<>();
+    private static List<Socket> clientSockets = new ArrayList<>();
     private static Map<Integer, String> names = new HashMap<>();
-//    private static Map<Integer, String> portColourMap = new HashMap<>();
-//    private static int colorIndex;
     private Socket socket;
     private JTextArea textArea;
 
-    public ClientThread(Socket socket, JTextArea textArea) {
+    public Connection(Socket socket, JTextArea textArea) {
         this.socket = socket;
         this.textArea = textArea;
+        clientSockets.add(socket);
     }
 
     @Override
@@ -32,23 +32,28 @@ public class ClientThread implements Runnable {
 
             clientWriters.add(out);
 
-//            out.println("Enter client name: ");
             String name = in.nextLine();
             out.println(name + " has joined");
             names.put(socket.getPort(), name);
 
-            while (in.hasNextLine()) {
+            while (isServerRunning() && in.hasNextLine()) {
                 String input = in.nextLine();
 
                 chatLog(names.get(socket.getPort()) + " : " + input, textArea);
                 Consumer<PrintWriter> broadcast = writer -> writer.println(names.get(socket.getPort()) + " : " + input);
                 clientWriters.forEach(broadcast);
             }
+            clientWriters.forEach(writer -> writer.println("Server Shutting down... Goodbye"));
         } catch (Exception e) {
             System.out.println("Error:" + socket);
         } finally {
-            try { socket.close(); } catch (IOException e) {e.getMessage();}
-            System.out.println("Closed: " + socket);
+            try {
+                socket.close();
+                chatLog("Client socket Closed : " + socket, textArea);
+            } catch (IOException e) {
+                chatLog("Error closing client socket: " + e.getMessage(), textArea);
+            }
+            chatLog("Closed: " + socket, textArea);
         }
     }
 }
