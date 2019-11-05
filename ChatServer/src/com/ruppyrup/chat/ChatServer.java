@@ -11,6 +11,8 @@ import java.io.IOException;
 import java.net.ServerSocket;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 public class ChatServer extends JFrame implements Runnable {
     private static final long serialVersionUID = 4756118355993389721L;
@@ -18,6 +20,7 @@ public class ChatServer extends JFrame implements Runnable {
     private JTextArea logArea = new JTextArea(10, 30);
     private JButton startButton = new JButton("Start");
     private ServerSocket serverSocket;
+    private Map<String, Connection> connections = new ConcurrentHashMap<>();
 
     public ChatServer() {
         initGUI();
@@ -101,7 +104,14 @@ public class ChatServer extends JFrame implements Runnable {
         var dateFormat = new SimpleDateFormat("dd-MMM-yyyy, HH:mm:ss");
         var timeStamp = dateFormat.format(time);
         logArea.append(timeStamp + " -> " + message + "\n");
+    }
 
+    public boolean addConnection(Connection newConnection, String newName) {
+        if (connections.containsKey(newName)) {
+            return false;
+        }
+        connections.put(newName, newConnection);
+        return true;
     }
 
     public static void main(String[] args) {

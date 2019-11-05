@@ -1,7 +1,12 @@
 package com.ruppyrup.chat;
 
-import java.io.*;
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.PrintWriter;
 import java.net.Socket;
+
+import static com.ruppyrup.command.Command.S;
 
 public class Connection implements Runnable {
     private final static String DEFAULT_NAME = "New Client";
@@ -18,11 +23,17 @@ public class Connection implements Runnable {
         new Thread(this).start();
     }
 
+    public String getName() {
+        return name;
+    }
+
     @Override
     public void run() {
         try {
             in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
             out = new PrintWriter(socket.getOutputStream(), true);
+            sendToClient(S.getCommand());
+            boolean validName = false;
             boolean keepRunning = true;
             while (keepRunning) {
                 String input = in.readLine();
@@ -36,6 +47,11 @@ public class Connection implements Runnable {
         } finally {
             quit();
         }
+    }
+
+    private void sendToClient(String message) {
+        out.println(message);
+        server.log(message + " was sent to " + name);
     }
 
     private void quit() {

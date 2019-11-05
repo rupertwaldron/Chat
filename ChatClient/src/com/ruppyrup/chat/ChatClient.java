@@ -1,5 +1,6 @@
 package com.ruppyrup.chat;
 
+import com.ruppyrup.command.Command;
 import com.ruppyrup.mycomponents.TitleLabel;
 import com.ruppyrup.networking.LogInDialog;
 
@@ -15,6 +16,8 @@ import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.ConnectException;
 import java.net.Socket;
+
+import static com.ruppyrup.command.Command.*;
 
 public class ChatClient extends JFrame implements Runnable {
     private static final long serialVersionUID = -6247572210030262635L;
@@ -118,7 +121,21 @@ public class ChatClient extends JFrame implements Runnable {
             socket = new Socket(host, PORT_NUMBER);
             in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
             out = new PrintWriter(socket.getOutputStream(), true);
-            String input = in.readLine();
+
+            boolean keepRunning = true;
+            while (keepRunning) {
+                String input = in.readLine();
+                if (input == null) {
+                    keepRunning = false;
+                } else if (!input.isEmpty()){
+                    String actionCode = input.substring(0, 1);
+                    String paramaters = input.substring(1);
+                    var command = valueOf(actionCode);
+                    String outputMessage = getResponse(command);
+                    out.println(outputMessage);
+                }
+            }
+
         } catch (ConnectException e) {
             JOptionPane.showMessageDialog(this, "The server is not running");
         } catch (IOException ee) {
@@ -126,6 +143,16 @@ public class ChatClient extends JFrame implements Runnable {
         } finally {
             close();
         }
+    }
+
+    private String getResponse(Command command) {
+        String outputMessage = switch (command) {
+            case S:
+                yield N.getCommand() + name;
+            default:
+                yield null;
+        };
+        return outputMessage;
     }
 
     private void close() {
