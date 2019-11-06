@@ -7,3 +7,13 @@ S
 #.idea/sonarlint/issuestore/index.pb,9/f/9fe84ebb15faf917b7def6236dba604453cc61e0
 I
 ChatClient/ChatClient.iml,5/3/5345d0225c637c2ff61a49247660215fee0cd743
+9
+	LogIn.txt,1/5/15638dc72b6dc24dc8d23a591f1f9a11a4c34bba
+I
+ChatServer/ChatServer.iml,2/7/272fc7431eb9d1586309256a2feb40bfa72c2945
+X
+(src/com/ruppyrup/command/ChatLogger.java,3/9/3921c7d61dca399a95dccc52161f8f19a2576040
+U
+%src/com/ruppyrup/command/Command.java,4/e/4e36e77774bbf1ff88c738a069f77145e4be1bd2
+`
+0ChatServer/src/com/ruppyrup/chat/Connection.java,8/5/850341203af82300300392b7c8bea72d90d1388c

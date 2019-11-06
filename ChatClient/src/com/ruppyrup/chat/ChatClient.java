@@ -16,8 +16,11 @@ import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.ConnectException;
 import java.net.Socket;
+import java.util.Optional;
 
-import static com.ruppyrup.command.Command.*;
+import static com.ruppyrup.command.ChatLogger.chatLog;
+import static com.ruppyrup.command.Command.N;
+import static com.ruppyrup.command.Command.valueOf;
 
 public class ChatClient extends JFrame implements Runnable {
     private static final long serialVersionUID = -6247572210030262635L;
@@ -109,7 +112,7 @@ public class ChatClient extends JFrame implements Runnable {
     private void send() {
         String message = inputArea.getText().trim();
         if (message.length() > 0) {
-            System.out.println(message);
+            out.println(message);
             inputArea.setText("");
         }
     }
@@ -122,18 +125,20 @@ public class ChatClient extends JFrame implements Runnable {
             in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
             out = new PrintWriter(socket.getOutputStream(), true);
 
-            boolean keepRunning = true;
-            while (keepRunning) {
-                String input = in.readLine();
-                if (input == null) {
-                    keepRunning = false;
-                } else if (!input.isEmpty()){
-                    String actionCode = input.substring(0, 1);
-                    String paramaters = input.substring(1);
-                    var command = valueOf(actionCode);
-                    String outputMessage = getResponse(command);
-                    out.println(outputMessage);
-                }
+            while (true) {
+                Optional<String> input = Optional.ofNullable(in.readLine());
+
+                if (input.isEmpty()) break;
+
+                String actionCode = input.get().substring(0, 1);
+                String paramaters = input.get().substring(1);
+
+                var command = valueOf(actionCode);
+                Optional<String> outputMessage = Optional.ofNullable(getResponse(command, paramaters));
+                outputMessage.ifPresent((message) -> {
+                    out.println(message);
+                    chatLog(message, chatArea);
+                });
             }
 
         } catch (ConnectException e) {
@@ -145,14 +150,13 @@ public class ChatClient extends JFrame implements Runnable {
         }
     }
 
-    private String getResponse(Command command) {
-        String outputMessage = switch (command) {
+    private String getResponse(Command command, String parameters) {
+        return switch (command) {
             case S:
                 yield N.getCommand() + name;
             default:
                 yield null;
         };
-        return outputMessage;
     }
 
     private void close() {
