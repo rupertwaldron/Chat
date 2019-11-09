@@ -19,8 +19,7 @@ import java.net.Socket;
 import java.util.Optional;
 
 import static com.ruppyrup.command.ChatLogger.chatLog;
-import static com.ruppyrup.command.Command.N;
-import static com.ruppyrup.command.Command.valueOf;
+import static com.ruppyrup.command.Command.*;
 
 public class ChatClient extends JFrame implements Runnable {
     private static final long serialVersionUID = -6247572210030262635L;
@@ -31,8 +30,8 @@ public class ChatClient extends JFrame implements Runnable {
     private Socket socket;
     private BufferedReader in;
     private PrintWriter out;
-    private JTextArea chatArea = new JTextArea(20, 20);
-    private JTextArea inputArea = new JTextArea(3, 20);
+    private JTextArea chatArea = new JTextArea(20, 30);
+    private JTextArea inputArea = new JTextArea(3, 30);
     private LogInDialog logInDiaglog = new LogInDialog("Chat");
 
 
@@ -112,8 +111,7 @@ public class ChatClient extends JFrame implements Runnable {
     private void send() {
         String message = inputArea.getText().trim();
         if (message.length() > 0) {
-            out.println(message);
-            inputArea.setText("");
+            processCommand(BROADCAST, message);
         }
     }
 
@@ -129,16 +127,19 @@ public class ChatClient extends JFrame implements Runnable {
                 Optional<String> input = Optional.ofNullable(in.readLine());
 
                 if (input.isEmpty()) break;
-
-                String actionCode = input.get().substring(0, 1);
-                String paramaters = input.get().substring(1);
+                String serverMessage = input.get();
+                String actionCode;
+                String parameters = "";
+                if (serverMessage.endsWith(":")) {
+                    actionCode = serverMessage.substring(0, serverMessage.indexOf(":"));
+                } else {
+                    String[] message = serverMessage.split(":");
+                    actionCode = message[0];
+                    parameters = message[1];
+                }
 
                 var command = valueOf(actionCode);
-                Optional<String> outputMessage = Optional.ofNullable(getResponse(command, paramaters));
-                outputMessage.ifPresent((message) -> {
-                    out.println(message);
-                    chatLog(message, chatArea);
-                });
+                processCommand(command, parameters);
             }
 
         } catch (ConnectException e) {
@@ -150,13 +151,26 @@ public class ChatClient extends JFrame implements Runnable {
         }
     }
 
-    private String getResponse(Command command, String parameters) {
-        return switch (command) {
-            case S:
-                yield N.getCommand() + name;
-            default:
-                yield null;
-        };
+    private void processCommand(Command command, String parameters) {
+        switch (command) {
+            case SUBMIT -> {
+                String messageToSever = NAME.getCommand() + name;
+                out.println(messageToSever);
+                chatLog(messageToSever, chatArea);
+            }
+            case CHAT -> chatLog(parameters, chatArea);
+            case ACCEPTED -> chatLog("server accepted name: " + name + "-> (server)" + parameters, chatArea);
+            case REJECTED -> {
+                chatLog("server rejected name: " + name + "-> (server)" + parameters, chatArea);
+                close();
+            }
+            case BROADCAST -> {
+                String messageToSever = name + "-> " + parameters;
+                out.println(BROADCAST.getCommand() + messageToSever);
+                inputArea.setText("");
+            }
+            default -> chatLog("No command from server", chatArea);
+        }
     }
 
     private void close() {
@@ -166,6 +180,15 @@ public class ChatClient extends JFrame implements Runnable {
             }
         } catch (IOException e) {
             System.exit(0);
+        } finally {
+            try {
+                chatLog("Closing down.....", chatArea);
+                Thread.sleep(2000);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            } finally {
+            System.exit(0);
+            }
         }
     }
 

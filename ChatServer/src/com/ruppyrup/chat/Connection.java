@@ -36,18 +36,24 @@ public class Connection implements Runnable {
         try {
             in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
             out = new PrintWriter(socket.getOutputStream(), true);
-            sendToClient(S.getCommand());
+            sendToClient(SUBMIT.getCommand());
             boolean validName = false;
             while (true) {
                 Optional<String> input = Optional.ofNullable(in.readLine());
                 chatLog(input.orElse("No response from client: " + name), server.getLogArea());
                 if (input.isEmpty()) break;
-
-                String actionCode = input.get().substring(0, 1);
-                String paramaters = input.get().substring(1);
+                String clientMessage = input.get();
+                String actionCode;
+                String parameters = "";
+                if (clientMessage.endsWith(":")) {
+                    actionCode = clientMessage.substring(0, clientMessage.indexOf(":"));
+                } else {
+                    String[] message = clientMessage.split(":");
+                    actionCode = message[0];
+                    parameters = message[1];
+                }
                 var command = valueOf(actionCode);
-                String message = processCommand(command, paramaters);
-                out.println(message);
+                processCommand(command, parameters);
             }
         } catch (IOException e) {
             chatLog("Error connecting/communicating to new client : " + e.getMessage(), server.getLogArea());
@@ -56,19 +62,29 @@ public class Connection implements Runnable {
         }
     }
 
-    private String processCommand(Command command, String parameters) {
-        return switch (command) {
-            case N: {
-                if (server.addConnection(parameters, socket)) {
+    private void processCommand(Command command, String parameters) {
+        switch (command) {
+            case NAME -> {
+                chatLog("(received)" + NAME.getCommand() + parameters + " from " + name, server.getLogArea());
+                if (server.addConnection(out, parameters)) {
                     name = parameters;
-                    yield (A + parameters + " added to server 😁");
+                    String messageToClient = ACCEPTED.getCommand() + parameters + " added to server";
+                    out.println(messageToClient);
+                    server.broadCast(CHAT.getCommand() + name + " has joined the chat room");
+                    chatLog("(sent)" + messageToClient, server.getLogArea());
                 } else {
-                    yield (R + parameters + " may already exist 😟");
+                    String messageToClient = REJECTED.getCommand() + parameters + " may already exist";
+                    out.println(messageToClient);
+                    chatLog("(sent)" + messageToClient, server.getLogArea());
+                    chatLog("Disconnecting client", server.getLogArea());
+                    quit();
                 }
             }
-            default:
-                yield "No message available";
-        };
+            case BROADCAST -> {
+                chatLog("(received)" + BROADCAST.getCommand() + parameters + " from " + name, server.getLogArea());
+                server.broadCast(CHAT.getCommand() + parameters);
+            }
+        }
     }
 
     private void sendToClient(String message) {
@@ -78,6 +94,8 @@ public class Connection implements Runnable {
 
     private void quit() {
         chatLog("Connection ended for " + name, server.getLogArea());
+        server.removeConnection(out);
+        server.broadCast(CHAT.getCommand() + name + " has left the chat room");
         try {
             socket.close();
         } catch (IOException e) {

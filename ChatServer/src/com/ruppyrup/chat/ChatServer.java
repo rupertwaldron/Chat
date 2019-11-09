@@ -8,9 +8,10 @@ import java.awt.*;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.io.IOException;
+import java.io.PrintWriter;
 import java.net.ServerSocket;
-import java.net.Socket;
 import java.util.Map;
+import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
 
 import static com.ruppyrup.command.ChatLogger.chatLog;
@@ -21,7 +22,7 @@ public class ChatServer extends JFrame implements Runnable {
     private JTextArea logArea = new JTextArea(20, 50);
     private JButton startButton = new JButton("Start");
     private ServerSocket serverSocket;
-    private Map<String, Socket> connections = new ConcurrentHashMap<>();
+    private Map<PrintWriter, String> connections = new ConcurrentHashMap<>();
 
     public ChatServer() {
         initGUI();
@@ -104,12 +105,31 @@ public class ChatServer extends JFrame implements Runnable {
         }
     }
 
-    public boolean addConnection(String newName, Socket newConnection) {
-        if (connections.containsKey(newName)) {
+    public boolean addConnection(PrintWriter printWriter, String name) {
+        if (connections.containsKey(printWriter)) {
             return false;
         }
-        connections.put(newName, newConnection);
+        connections.put(printWriter, name);
         return true;
+    }
+
+    public boolean removeConnection(PrintWriter printWriter) {
+        if (!connections.containsKey(printWriter)) {
+            return false;
+        }
+        connections.remove(printWriter);
+        return true;
+    }
+
+    public Optional<String> getName(PrintWriter printWriter) {
+        return Optional.ofNullable(connections.get(printWriter));
+    }
+
+    public void broadCast(String message) {
+        connections.keySet().forEach(printWriter -> {
+            chatLog("(sent)" + message + " to " + connections.get(printWriter), logArea);
+            printWriter.println(message);
+        });
     }
 
     public static void main(String[] args) {
@@ -121,7 +141,5 @@ public class ChatServer extends JFrame implements Runnable {
         }
 
         SwingUtilities.invokeLater(ChatServer::new);
-
-
     }
 }

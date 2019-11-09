@@ -1,9 +1,9 @@
 
+Msquid:S16116"/Remove the parentheses around the "a" parameter(ÅãòØ8ÚµŞ¡á-
+isquid:CommentedOutCodeLineH"<This block of commented-out lines of code should be removed.(µº‹˜8èóÛ¡á-
 Hsquid:S00108w")Either remove or fill this block of code.(”ı¾8í·™öà-
 Msquid:S2093\"*Change this "try" to a try-with-resources.(¡»¢üùÿÿÿÿ8ö±¡ á-
-Qsquid:S1948".Make "serverSocket" transient or serializable.(“—Ó¿ıÿÿÿÿ8ä¡ á-
-isquid:CommentedOutCodeLineH"<This block of commented-out lines of code should be removed.(µº‹˜8èóÛ¡á-
-Psquid:S1948"-Make "connections" transient or serializable.(úüïœúÿÿÿÿ8µ±óÔã-
-Msquid:S16116"/Remove the parentheses around the "a" parameter(ÅãòØ8ÚµŞ¡á-
 ]squid:S1161<":Add the "@Override" annotation above this method signature(†§şıÿÿÿÿ8à¨¦¡á-
+Qsquid:S1948".Make "serverSocket" transient or serializable.(“—Ó¿ıÿÿÿÿ8ä¡ á-
+Psquid:S1948"-Make "connections" transient or serializable.(úüïœúÿÿÿÿ8µ±óÔã-
 qsquid:MaximumInheritanceDepth"<This class has 6 parents which is greater than 5 authorized.(Ïú“÷ûÿÿÿÿ8‚ƒÚõà-

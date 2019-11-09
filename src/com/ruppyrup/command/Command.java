@@ -2,13 +2,13 @@ package com.ruppyrup.command;
 
 public enum Command {
 
-    S("S"),
-    A("A"),
-    R("R"),
-    C("C"),
-    N("N"),
-    B("B"),
-    Q("Q");
+    SUBMIT("SUBMIT"),
+    ACCEPTED("ACCEPTED"),
+    REJECTED("REJECTED"),
+    CHAT("CHAT"),
+    NAME("NAME"),
+    BROADCAST("BROADCAST"),
+    QUIT("QUIT");
 
     private String command;
 
@@ -17,6 +17,6 @@ public enum Command {
     }
 
     public String getCommand () {
-        return command;
+        return command + ":";
     }
 }
