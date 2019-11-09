@@ -24,7 +24,6 @@ public class Connection implements Runnable {
     public Connection(ChatServer server, Socket socket) {
         this.server = server;
         this.socket = socket;
-        new Thread(this).start();
     }
 
     public String getName() {

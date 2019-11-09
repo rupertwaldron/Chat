@@ -13,6 +13,7 @@ import java.net.ServerSocket;
 import java.util.Map;
 import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.Executors;
 
 import static com.ruppyrup.command.ChatLogger.chatLog;
 
@@ -92,10 +93,11 @@ public class ChatServer extends JFrame implements Runnable {
         chatLog("Server is running...", logArea);
         try {
             serverSocket = new ServerSocket(PORT_NUMBER);
+            var pool = Executors.newFixedThreadPool(20);
             while (true) {
                 var socket = serverSocket.accept();
                 chatLog("New connection to " + socket.getInetAddress() + " : " + socket.getPort(), logArea);
-                new Connection(this, socket);
+                pool.execute(new Connection(this, socket));
             }
         } catch (IOException e) {
             chatLog("Exception whilst trying to listen on port " + PORT_NUMBER, logArea);
